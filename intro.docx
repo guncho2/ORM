@@ -1,0 +1,95 @@
+remove duplicates in a query response
+
+Post.select(:body).distinct
+
+SELECT DISTINCT fullname FROM post;
+
+filter records using inequalities, pattern matching, ranges, and boolean logic
+
+  Comment.where.not(user_id: 2)
+
+  SELECT * FROM comment WHERE (comment.user_id != 2);
+
+
+boolean 
+
+Post.where(exist: true)
+
+SELECT * FROM post WHERE exist = true;
+
+
+ranges
+
+Comment.where(created_at: (Time.now.midnigth - 30.day)..Time.now.midnigth)
+
+SELECT * FROM comment WHERE (comment.created_at between '2019-11-5 00:00:00' AND '2019-12-4 00:00:00');
+
+pattern matching 
+
+  user = user.find(3)
+
+  SELECT * FROM user WHERE (user.id = 3) LIMIT 1;
+
+
+
+
+
+sort records in a particular order
+
+  comment.order(created_at: :dec)
+
+  SELECT * FROM comment ORDER BY orders_count DESC;
+
+
+
+
+limit the number of records returned
+
+user.limit(3)
+
+SELECT * FROM user LIMIT 3;
+
+
+
+group records into sections
+
+comment.group(:post_id)
+
+SELECT status FROM comment GROUP BY post_id;
+
+perform calculations using aggregate functions
+
+  user.post("body_count")
+
+  SELECT AVG(body_count) FROM post where body_count < 5
+
+join tables using cross join, inner join, and outer join
+
+
+crossjoin tables
+
+Comment.find_by_sql("SELECT * FROM comment CROSS JOIN post")
+
+SELECT * FROM comment CROSS JOIN post;
+
+inner join tables 
+
+post.joins(:comment)
+
+SELECT  title
+FROM post INNER JOIN comment ON comment.id = post_id;
+
+
+
+outer join tables
+
+SELECT  DISTINCT fullname,
+                COUNT(fullname) AS fullname_count 
+        FROM user
+        LEFT OUTER JOIN post ON post.user_id = user.id    
+        GROUP BY post.id;
+
+        User.left_outer_join(:post).distinct.select("fullname, COUNT(fullname) AS fullname_count").group("post_id")
+
+
+        
